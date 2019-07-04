@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/accelerate_interpolator"
+    android:fillBefore="false"
+    android:fillAfter="false"
+    android:fillEnabled="false"
+    android:duration="4000"
+    android:repeatMode="restart">
+    <translate android:interpolator="@android:anim/accelerate_interpolator"
+        android:fillBefore="false"
+        android:fillAfter="false"
+        android:fillEnabled="false"
+        android:duration="4000"
+        android:repeatMode="restart"
+        android:repeatCount="infinite"
+        android:fromYDelta="100%p"
+        android:toYDelta="-100%p"/>
+    <!--<alpha android:interpolator="@android:anim/accelerate_decelerate_interpolator"-->
+        <!--android:fillBefore="false"-->
+        <!--android:fillAfter="false"-->
+        <!--android:fillEnabled="false"-->
+        <!--android:duration="4000"-->
+        <!--android:repeatMode="restart"-->
+        <!--android:repeatCount="infinite"-->
+        <!--android:fromAlpha="1.0"-->
+        <!--android:toAlpha="0.0" />-->
+    <!--<scale android:interpolator="@android:anim/linear_interpolator"-->
+        <!--android:fillBefore="false"-->
+        <!--android:fillAfter="false"-->
+        <!--android:fillEnabled="false"-->
+        <!--android:duration="4000"-->
+        <!--android:repeatMode="restart"-->
+        <!--android:repeatCount="infinite"-->
+        <!--android:fromXScale="0.0"-->
+        <!--android:fromYScale="0.0"-->
+        <!--android:pivotX="50%"-->
+        <!--android:pivotY="50%"-->
+        <!--android:toXScale="1.0"-->
+        <!--android:toYScale="1.0"/>-->
+    <rotate android:interpolator="@android:anim/linear_interpolator"
+        android:fillBefore="false"
+        android:fillAfter="false"
+        android:fillEnabled="false"
+        android:duration="4000"
+        android:repeatMode="restart"
+        android:repeatCount="infinite"
+        android:fromDegrees="0"
+        android:toDegrees="4"
+        android:pivotX="50%"
+        android:pivotY="50%">
+    </rotate>
+</set>
+    <!--"@android:anim/linear_interpolator"-->
+    <!--@android:anim/accelerate_interpolator-->

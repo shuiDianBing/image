@@ -61,6 +61,7 @@ public class CameraHelp {
         Camera.Parameters parameters = mCamera.getParameters();
         mCameraPreviewFps = chooseFixedPreviewFps(parameters, expectFps * 1000);
         parameters.setRecordingHint(true);
+        //parameters.setZoom(parameters.getMaxZoom());
         mCamera.setParameters(parameters);
         setPreviewSize(mCamera, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setPictureSize(mCamera, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -85,6 +86,7 @@ public class CameraHelp {
         Camera.Parameters parameters = mCamera.getParameters();
         mCameraPreviewFps = chooseFixedPreviewFps(parameters, expectFps * 1000);
         parameters.setRecordingHint(true);
+        //parameters.setZoom(parameters.getMaxZoom());
         mCamera.setParameters(parameters);
         setPreviewSize(mCamera, DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setPictureSize(mCamera, DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -359,13 +361,13 @@ public class CameraHelp {
         mOrientation = result;
         return result;
     }
-    public static Bitmap getBitMap(byte[] data, Camera camera, boolean mIsFrontalCamera) {
-        int width = camera.getParameters().getPreviewSize().width;
-        int height = camera.getParameters().getPreviewSize().height;
+    public static Bitmap getBitMap(byte[] data, Camera camera,int width,int height, boolean mIsFrontalCamera) {
+        int cameraWidth = camera.getParameters().getPreviewSize().width;
+        int cameraHeight = camera.getParameters().getPreviewSize().height;
         YuvImage yuvImage = new YuvImage(data, camera.getParameters()
-                .getPreviewFormat(), width, height, null);
+                .getPreviewFormat(), cameraWidth, cameraHeight, null);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        yuvImage.compressToJpeg(new Rect(0, 0, width, height), 80,
+        yuvImage.compressToJpeg(new Rect(0, 0, cameraWidth, cameraHeight), 80,
                 byteArrayOutputStream);
         byte[] jpegData = byteArrayOutputStream.toByteArray();
         // 获取照相后的bitmap
@@ -378,8 +380,8 @@ public class CameraHelp {
         } else {
             matrix.setRotate(90);
         }
-        tmpBitmap = Bitmap.createBitmap(tmpBitmap, tmpBitmap.getWidth()/2, tmpBitmap.getHeight()/2, 128,
-                128, matrix, true);
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap, (tmpBitmap.getWidth()-width)/2, (tmpBitmap.getHeight()-height)/2, width,
+                height, matrix, true);
         tmpBitmap = tmpBitmap.copy(Bitmap.Config.ARGB_8888, true);
 
         int hight = tmpBitmap.getHeight() > tmpBitmap.getWidth() ? tmpBitmap
