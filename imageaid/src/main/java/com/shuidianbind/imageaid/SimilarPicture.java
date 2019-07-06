@@ -1,6 +1,7 @@
 package com.shuidianbind.imageaid;
 
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 
 /**
  * Android实现图片相似度 << https://blog.csdn.net/u010652002/article/details/72722198
@@ -14,7 +15,7 @@ public class SimilarPicture {
      * @param img 位图
      * @return 返回转换好的位图
      */
-    public static Bitmap convertGreyImg(Bitmap img) {
+    private static Bitmap convertGreyImg(Bitmap img) {
         int width = img.getWidth();         //获取位图的宽
         int height = img.getHeight();       //获取位图的高
 
@@ -51,7 +52,7 @@ public class SimilarPicture {
      * @param img
      * @return
      */
-    public static int getAvg(Bitmap img) {
+    private static int getAvg(Bitmap img) {
         int width = img.getWidth();
         int height = img.getHeight();
         int[] pixels = new int[width * height];
@@ -69,7 +70,7 @@ public class SimilarPicture {
      * @param average
      * @return
      */
-    public static String getBinary(Bitmap img, int average) {
+    private static String getBinary(Bitmap img, int average) {
         StringBuilder sb = new StringBuilder();
 
         int width = img.getWidth();
@@ -95,7 +96,7 @@ public class SimilarPicture {
      * @param bString
      * @return
      */
-    public static String binaryString2hexString(String bString) {
+    private static String binaryString2hexString(String bString) {
         if (bString == null || bString.equals("") || bString.length() % 8 != 0)
             return null;
         StringBuilder sb = new StringBuilder();
@@ -114,7 +115,7 @@ public class SimilarPicture {
      * @param s1
      * @param s2
      */
-    public static float similarity(String s1, String s2) {
+    private static float similarity(String s1, String s2) {
         char[] s1s = s1.toCharArray();
         char[] s2s = s2.toCharArray();
         float diffNum = 0;
@@ -125,6 +126,21 @@ public class SimilarPicture {
         }
         System.out.println("SimilarPicture.similarity = "+diffNum);
         return diffNum/s1s.length;
+    }
+
+    /**
+     *
+     * @param origin
+     * @param contrast
+     * @param width
+     * @param height
+     * @return
+     */
+    public static float similarity(Bitmap origin,Bitmap contrast,int width,int height){
+        Bitmap grayOriginal = SimilarPicture.convertGreyImg(ThumbnailUtils.extractThumbnail(origin, width, height));
+        Bitmap grayContrast = SimilarPicture.convertGreyImg(ThumbnailUtils.extractThumbnail(contrast, width, height));
+        return SimilarPicture.similarity(SimilarPicture.binaryString2hexString(SimilarPicture.getBinary(grayOriginal, SimilarPicture.getAvg(grayOriginal)))
+                , SimilarPicture.binaryString2hexString(SimilarPicture.getBinary(grayContrast, SimilarPicture.getAvg(grayContrast))));
     }
     public static Bitmap convertWABImg(Bitmap img, int average) {
         System.out.println("平均值=" + average);

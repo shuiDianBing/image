@@ -25,7 +25,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.shuidianbind.image.widget.CameraSurfaceView;
 import com.shuidianbind.imageaid.CameraHelp;
+import com.shuidianbind.imageaid.Screen;
 import com.shuidianbind.imageaid.SimilarPicture;
+import com.shuidianbind.imageaid.UnitConversiion;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -97,10 +99,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void preview() {
         final ImageView imageBalloon = findViewById(R.id.imageBalloon3);
+        final View view = findViewById(R.id.window);
         int rotation = CameraHelp.calculateCameraPreviewOrientation(this);
         (cameraSurfaceView = findViewById(R.id.cameraSurface)).setOneShotPreviewCallback(previewCallback = new Camera.PreviewCallback() {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
+                //android摄像头开发,将Camera.onPreviewFrame里面的data转换成bitmap << https://blog.csdn.net/qiguangyaolove/article/details/53130061
 //                Camera.Size previewSize = camera.getParameters().getPreviewSize();//获取尺寸,格式转换的时候要用到
 //                BitmapFactory.Options newOpts = new BitmapFactory.Options();
 //                newOpts.inJustDecodeBounds = true;
@@ -112,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
 //                BitmapFactory.Options options = new BitmapFactory.Options();
 //                options.inPreferredConfig = Bitmap.Config.RGB_565;
 //                Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
-                Bitmap bitmap = CameraHelp.getBitMap(data, camera, 500, 316, false);
+                Bitmap bitmap = CameraHelp.getBitMap(data, camera, 350,
+                        220, false);
                 comparisonRunable.setContrast(bitmap);
                 if (null != comparisonRunable)
                     threadPoolExecutor.execute(comparisonRunable);
@@ -204,12 +209,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             Log.d("当前线程：", Thread.currentThread().getName());
-            Bitmap grayOriginal = SimilarPicture.convertGreyImg(ThumbnailUtils.extractThumbnail(origin, 8, 8));
-            Bitmap grayContrast = SimilarPicture.convertGreyImg(ThumbnailUtils.extractThumbnail(contrast, 8, 8));
-            float similarity = SimilarPicture.similarity(SimilarPicture.binaryString2hexString(SimilarPicture.getBinary(grayOriginal, SimilarPicture.getAvg(grayOriginal)))
-                    , SimilarPicture.binaryString2hexString(SimilarPicture.getBinary(grayContrast, SimilarPicture.getAvg(grayContrast))));
+            float similarity = SimilarPicture.similarity(origin,contrast,8,8);
             synchronized (LOCK) {
-                handler.obtainMessage(0.8 < similarity ? 0 : -1, contrast).sendToTarget();
+                handler.obtainMessage(0.7 < similarity ? 0 : -1, contrast).sendToTarget();
                 //if (0.8 < similarity)
                     //goback(weakReference.get(), similarity);
             }
