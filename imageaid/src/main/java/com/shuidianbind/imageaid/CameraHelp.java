@@ -391,7 +391,7 @@ public class CameraHelp {
         float width = tmpBitmap.getWidth()* widthScale;
         float height = width * aspectRatio;
         float startX = (tmpBitmap.getWidth()- width)/2;
-        float startY = (tmpBitmap.getHeight()-height)/2;
+        float startY = (tmpBitmap.getHeight()- height)/2;
         tmpBitmap = Bitmap.createBitmap(tmpBitmap,(int)startX,(int)startY, (int)width,(int)height);
         tmpBitmap = tmpBitmap.copy(Bitmap.Config.ARGB_8888, true);
         int w = tmpBitmap.getWidth();

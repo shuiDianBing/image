@@ -105,15 +105,16 @@
         app:layout_constraintBottom_toTopOf="@id/imageBalloon3"/>
     <ImageView
         android:id="@+id/imageBalloon3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="280dp"
+        android:layout_height="176dp"
+        android:layout_marginBottom="8dp"
         android:layout_alignParentBottom="true"
         android:adjustViewBounds="true"
         android:scaleType="fitXY"
         android:onClick="onClick"
         android:src="@mipmap/ic_launcher"
+        app:layout_constraintTop_toBottomOf="@id/window"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
     <ImageView
         android:id="@+id/imageBalloon4"
