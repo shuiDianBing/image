@@ -116,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
 //                BitmapFactory.Options options = new BitmapFactory.Options();
 //                options.inPreferredConfig = Bitmap.Config.RGB_565;
 //                Bitmap bitmap = BitmapFactory.decodeByteArray(rawImage, 0, rawImage.length, options);
-                Bitmap bitmap = CameraHelp.getBitMap(data, camera, 350,
-                        220, false);
+                Bitmap bitmap = CameraHelp.adjustment(MainActivity.this,data,camera,view.getWidth(),view.getHeight());
                 comparisonRunable.setContrast(bitmap);
                 if (null != comparisonRunable)
                     threadPoolExecutor.execute(comparisonRunable);

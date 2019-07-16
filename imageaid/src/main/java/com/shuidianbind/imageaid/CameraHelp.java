@@ -362,20 +362,19 @@ public class CameraHelp {
         mOrientation = result;
         return result;
     }
-
     /**
      * 安卓摄像头 data 转bitmap << https://blog.csdn.net/lsw8569013/article/details/78882156
-     * @param data
-     * @param camera
-     * @param width
-     * @param height
+     * @param bytes 图像流数据
+     * @param camera 相机
+     * @param widthScale 裁剪宽度比例
+     * @param aspectRatio 宽高比例
      * @param mIsFrontalCamera
      * @return
      */
-    public static Bitmap getBitMap(byte[] data, Camera camera,int width,int height, boolean mIsFrontalCamera) {
+    public static Bitmap getBitMap(byte[] bytes, Camera camera,float widthScale,float aspectRatio, boolean mIsFrontalCamera) {
         int cameraWidth = camera.getParameters().getPreviewSize().width;
         int cameraHeight = camera.getParameters().getPreviewSize().height;
-        YuvImage yuvImage = new YuvImage(data,camera.getParameters().getPreviewFormat(),cameraWidth,cameraHeight,null);
+        YuvImage yuvImage = new YuvImage(bytes,camera.getParameters().getPreviewFormat(),cameraWidth,cameraHeight,null);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         yuvImage.compressToJpeg(new Rect(0, 0, cameraWidth, cameraHeight), 80, byteArrayOutputStream);
         byte[] jpegData = byteArrayOutputStream.toByteArray();
@@ -383,18 +382,39 @@ public class CameraHelp {
         Bitmap tmpBitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
         Matrix matrix = new Matrix();
         matrix.reset();
+        matrix.postScale(1,1);
         if(mIsFrontalCamera)
             matrix.setRotate(-90);
         else
             matrix.setRotate(90);
-        tmpBitmap = Bitmap.createBitmap(tmpBitmap,(tmpBitmap.getWidth()- width)/2,(tmpBitmap.getHeight()-height)/2,
-                width,height,matrix,true);
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap,0,0, cameraWidth,cameraHeight,matrix,true);
+        int width = (int) (tmpBitmap.getWidth()* widthScale);
+        int height = (int)(width * aspectRatio);
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap,(tmpBitmap.getWidth()- width)/2,(tmpBitmap.getHeight()-height)/2, width,height);
         tmpBitmap = tmpBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        int w = tmpBitmap.getWidth();
+        int h = tmpBitmap.getHeight();
         int hight = tmpBitmap.getHeight()> tmpBitmap.getWidth() ? tmpBitmap.getHeight(): tmpBitmap.getWidth();
-        float scale = hight / 800.0f;
+        //float scale = hight / 800.0f;
         //if (scale > 1)
         //    tmpBitmap = Bitmap.createScaledBitmap(tmpBitmap,(int)(tmpBitmap.getWidth()/ scale),(int)(tmpBitmap.getHeight()/ scale), false);
         return tmpBitmap;
+    }
+
+    /**
+     *
+     * @param activity
+     * @param data
+     * @param camera
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap adjustment(Activity activity,byte[] data,Camera camera,int width,int height){
+        final int[] xy = Screen.getScreenScale(activity);
+        height *= width/(float)xy[0];
+        Bitmap bitmap = getBitMap(data, camera, width/(float)xy[0], height/(float)width,false);
+        return bitmap;
     }
     /**
      * 获取当前的Camera ID
