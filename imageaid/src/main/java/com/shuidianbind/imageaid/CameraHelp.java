@@ -388,9 +388,11 @@ public class CameraHelp {
         else
             matrix.setRotate(90);
         tmpBitmap = Bitmap.createBitmap(tmpBitmap,0,0, cameraWidth,cameraHeight,matrix,true);
-        int width = (int) (tmpBitmap.getWidth()* widthScale);
-        int height = (int)(width * aspectRatio);
-        tmpBitmap = Bitmap.createBitmap(tmpBitmap,(tmpBitmap.getWidth()- width)/2,(tmpBitmap.getHeight()-height)/2, width,height);
+        float width = tmpBitmap.getWidth()* widthScale;
+        float height = width * aspectRatio;
+        float startX = (tmpBitmap.getWidth()- width)/2;
+        float startY = (tmpBitmap.getHeight()-height)/2;
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap,(int)startX,(int)startY, (int)width,(int)height);
         tmpBitmap = tmpBitmap.copy(Bitmap.Config.ARGB_8888, true);
         int w = tmpBitmap.getWidth();
         int h = tmpBitmap.getHeight();

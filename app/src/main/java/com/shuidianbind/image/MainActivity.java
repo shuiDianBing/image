@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         valueAnimator.setDuration(4000);
-        valueAnimator.start();
+        //valueAnimator.start();
     }
 
     private static void goback(AppCompatActivity appCompatActivity, float similarity) {
