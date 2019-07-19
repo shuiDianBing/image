@@ -402,6 +402,33 @@ public class CameraHelp {
         //    tmpBitmap = Bitmap.createScaledBitmap(tmpBitmap,(int)(tmpBitmap.getWidth()/ scale),(int)(tmpBitmap.getHeight()/ scale), false);
         return tmpBitmap;
     }
+    public static Bitmap getBitMap(byte[] bytes, Camera camera,int width,int height, boolean mIsFrontalCamera) {
+        int cameraWidth = camera.getParameters().getPreviewSize().width;
+        int cameraHeight = camera.getParameters().getPreviewSize().height;
+        YuvImage yuvImage = new YuvImage(bytes,camera.getParameters().getPreviewFormat(),cameraWidth,cameraHeight,null);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, cameraWidth, cameraHeight), 80, byteArrayOutputStream);
+        byte[] jpegData = byteArrayOutputStream.toByteArray();
+        // 获取照相后的bitmap
+        Bitmap tmpBitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+        Matrix matrix = new Matrix();
+        matrix.reset();
+        matrix.postScale(1,1);
+        if(mIsFrontalCamera)
+            matrix.setRotate(-90);
+        else
+            matrix.setRotate(90);
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap,0,0, cameraWidth,cameraHeight,matrix,true);
+        tmpBitmap = Bitmap.createBitmap(tmpBitmap,(tmpBitmap.getWidth()-width)/2,(tmpBitmap.getHeight()-height)/2, width,height);
+        tmpBitmap = tmpBitmap.copy(Bitmap.Config.ARGB_8888, true);
+        int w = tmpBitmap.getWidth();
+        int h = tmpBitmap.getHeight();
+        int hight = tmpBitmap.getHeight()> tmpBitmap.getWidth() ? tmpBitmap.getHeight(): tmpBitmap.getWidth();
+        //float scale = hight / 800.0f;
+        //if (scale > 1)
+        //    tmpBitmap = Bitmap.createScaledBitmap(tmpBitmap,(int)(tmpBitmap.getWidth()/ scale),(int)(tmpBitmap.getHeight()/ scale), false);
+        return tmpBitmap;
+    }
 
     /**
      *

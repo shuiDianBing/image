@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PointF;
 import android.hardware.Camera;
-import android.media.ThumbnailUtils;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -25,13 +23,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.shuidianbind.image.widget.CameraSurfaceView;
 import com.shuidianbind.imageaid.CameraHelp;
-import com.shuidianbind.imageaid.Screen;
 import com.shuidianbind.imageaid.SimilarPicture;
-import com.shuidianbind.imageaid.UnitConversiion;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -95,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 //                start(bitmap);
 //            }
 //        }.execute();
+
+        startActivity(new Intent(this, OpenCvSimilarityActivity.class));
     }
 
     private void preview() {
@@ -132,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
         threadPoolExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>());
         comparisonRunable = new ComparisonRunable(this, bitmap);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CameraHelp.releaseCamera();
     }
 
     @Override

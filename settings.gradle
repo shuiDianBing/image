@@ -1,1 +1,1 @@
-include ':app', ':imageaid'
+include ':app', ':imageaid', 'OpenCV410'

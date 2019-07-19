@@ -29,5 +29,6 @@ dependencies {
     
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     implementation project(path: ':imageaid')
+    implementation project(path: ':OpenCV410')
     //implementation 'com.github.shuiDianBing:image:1.0.0'
 }
