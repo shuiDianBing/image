@@ -37,13 +37,13 @@ public class OpencvActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opencv);
         previewOpnCv();
-        if (!OpenCVLoader.initDebug()) {
-            Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this,
-                    loaderCallback);
-        } else {
+        if (OpenCVLoader.initDebug()) {
             Log.d(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), working.");
-            loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            //loaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            cameraBridgeViewBase.enableView();
+        } else {
+            Log.e(this.getClass().getSimpleName(), "  OpenCVLoader.initDebug(), not working.");
+            //OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_9, this, loaderCallback);
         }
     }
     private void previewOpnCv(){
