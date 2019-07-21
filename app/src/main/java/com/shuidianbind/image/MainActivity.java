@@ -194,12 +194,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class ComparisonRunable implements Runnable {
-        private WeakReference<AppCompatActivity> weakReference;
+        private WeakReference<Activity> weakReference;
         private Bitmap origin, contrast;
         private String fingerprint;
 
-        public ComparisonRunable(AppCompatActivity appCompatActivity, Bitmap origin) {
-            weakReference = new WeakReference<AppCompatActivity>(appCompatActivity);
+        public ComparisonRunable(Activity activity, Bitmap origin) {
+            weakReference = new WeakReference<Activity>(activity);
             this.origin = origin;
         }
 
