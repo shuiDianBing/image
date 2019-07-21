@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }.execute();
 
-        startActivity(new Intent(this, OpenCvSimilarityActivity.class));
+        startActivity(new Intent(this, OpencvActivity.class));
     }
 
     private void preview() {
