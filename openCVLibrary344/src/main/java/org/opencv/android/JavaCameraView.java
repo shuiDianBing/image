@@ -1,6 +1,7 @@
 package org.opencv.android;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -16,6 +17,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -178,7 +180,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     mFrameHeight = params.getPreviewSize().height;
 
                     if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
-                        mScale = Math.min(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);
+                        mScale = 1;//Math.max(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);//Math.min(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);
                     else
                         mScale = 0;
 
@@ -210,6 +212,9 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                         mCamera.setPreviewDisplay(null);
 
                     /* Finally we are ready to start the preview */
+                    final boolean landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+                    setDisplayOrientation(mCamera, landscape ? 180:90);
+                    mCamera.setPreviewDisplay(getHolder());
                     Log.d(TAG, "startPreview");
                     mCamera.startPreview();
                 } else
@@ -223,6 +228,28 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         return result;
     }
 
+    /**
+     * 反射设置预览显示方向
+     * OpenCV相机定位问题(问题转向横向预览挤压) << https://stackoverflow.com/questions/16669779/opencv-camera-orientation-issue
+     * Android ＃4704 上的纵向方向 << https://github.com/opencv/opencv/issues/4704
+     * 如何在不破坏相机设置的情况下更改方向？ << https://answers.opencv.org/question/20325/how-can-i-change-orientation-without-ruin-camera-settings/
+     * https://github.com/thongdoan?tab=repositories
+     * @param camera
+     * @param angle
+     */
+    protected void setDisplayOrientation(Camera camera, int angle){
+        Method downPolymorphic;
+        try
+        {
+            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
+            if (downPolymorphic != null)
+                downPolymorphic.invoke(camera, new Object[] { angle });
+        }
+        catch (Exception e1)
+        {
+            e1.printStackTrace();
+        }
+    }
     protected void releaseCamera() {
         synchronized (this) {
             if (mCamera != null) {

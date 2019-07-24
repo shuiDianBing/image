@@ -1,15 +1,21 @@
 package org.opencv.android;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -418,6 +424,13 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 if (BuildConfig.DEBUG) {
                     Log.d(TAG, "mStretch value: " + mScale);
                 }
+                //插入代码6行(不可全屏预览)
+                /*Matrix matrix = new Matrix(); // I rotate it with minimal process
+                matrix.preTranslate((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,(canvas.getHeight() - mCacheBitmap.getHeight()) / 2);
+                matrix.postRotate(90f,(canvas.getWidth()) / 2,(canvas.getHeight()) / 2);
+                float scale = (float) canvas.getWidth() / (float) mCacheBitmap.getHeight();
+                matrix.postScale(scale, scale, canvas.getWidth()/2 , canvas.getHeight()/2 );
+                canvas.drawBitmap(mCacheBitmap, matrix, new Paint());*/
 
                 if (mScale != 0) {
                     mScale = 1;
@@ -437,6 +450,144 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
         }
     }
 
+    /**
+     * https://github.com/opencv/opencv/issues/4704
+     * 第2步：CameraBridgeViewBase.java
+     * 为了正确旋转矩阵，您可以使用以下代码替换deliverAndDrawFrame方法：
+     * 如何在不破坏相机设置的情况下更改方向？https://answers.opencv.org/question/20325/how-can-i-change-orientation-without-ruin-camera-settings/
+     * @param frame
+     */
+    protected void deliverAndDrawFrame1(CvCameraViewFrame frame) {
+        Mat modified;
+
+        if (mListener != null) {
+            modified = mListener.onCameraFrame(frame);
+        } else {
+            modified = frame.rgba();
+        }
+
+        boolean bmpValid = true;
+        if (modified != null) {
+            try {
+                Utils.matToBitmap(modified, mCacheBitmap);
+            } catch(Exception e) {
+                Log.e(TAG, "Mat type: " + modified);
+                Log.e(TAG, "Bitmap type: " + mCacheBitmap.getWidth() + "*" + mCacheBitmap.getHeight());
+                Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
+                bmpValid = false;
+            }
+        }
+
+        if (bmpValid && mCacheBitmap != null) {
+            Canvas canvas = getHolder().lockCanvas();
+            if (canvas != null) {
+                //this is the rotation part
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && mCameraIndex == -1) {
+                    Log.d(TAG, "INDEX IS: " + mCameraIndex);
+                    canvas.save();
+                    canvas.rotate(90,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }
+
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT && mCameraIndex == 1) {
+                    canvas.save();
+                    canvas.rotate(270,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }else
+                    canvas.save();
+
+                if (mScale != 0) {
+                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
+                            new Rect((int)((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2),
+                                    (int)((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2),
+                                    (int)((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2 + mScale*mCacheBitmap.getWidth()),
+                                    (int)((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2 + mScale*mCacheBitmap.getHeight())), null);
+                } else {
+                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
+                            new Rect((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2,
+                                    (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
+                }
+
+                if (mFpsMeter != null) {
+                    mFpsMeter.measure();
+                    mFpsMeter.draw(canvas, 20, 30);
+                }
+                if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                    canvas.restore();
+                }
+                getHolder().unlockCanvasAndPost(canvas);
+            }
+        }
+    }
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    protected void deliverAndDrawFrame2(CvCameraViewFrame frame) {
+        Mat modified;
+
+        if (mListener != null) {
+            modified = mListener.onCameraFrame(frame);
+        } else {
+            modified = frame.rgba();
+        }
+
+        boolean bmpValid = true;
+        if (modified != null) {
+            try {
+                Utils.matToBitmap(modified, mCacheBitmap);
+            } catch(Exception e) {
+                Log.e(TAG, "Mat type: " + modified);
+                Log.e(TAG, "Bitmap type: " + mCacheBitmap.getWidth() + "*" + mCacheBitmap.getHeight());
+                Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
+                bmpValid = false;
+            }
+        }
+        if (bmpValid && mCacheBitmap != null) {
+            Canvas canvas = getHolder().lockCanvas();
+            if (canvas != null) {
+                //this is the rotation part
+                //canvas.save();
+                Log.d(TAG,"CAMERAINDEX" + mCameraIndex);
+                if (getDisplay().getRotation() == Surface.ROTATION_0 && mCameraIndex == -1) {
+                    canvas.rotate(90,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }
+
+                if(getDisplay().getRotation() == Surface.ROTATION_0 &&  mCameraIndex == 0){
+                    canvas.rotate(90,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }
+
+                if (getDisplay().getRotation() == Surface.ROTATION_0 && mCameraIndex == 1) {
+                    canvas.rotate(270,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }
+
+
+                if (getDisplay().getRotation() == Surface.ROTATION_270) {
+                    canvas.rotate(180,  (canvas.getWidth()/ 2),(canvas.getHeight()/ 2));
+                }
+
+                if (mScale != 0) {
+
+                    Rect rect = canvas.getClipBounds();
+
+                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()), rect, null);
+
+                } else {
+                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
+                            new Rect((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2,
+                                    (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
+                                    (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
+                }
+
+                if (mFpsMeter != null) {
+                    mFpsMeter.measure();
+                    mFpsMeter.draw(canvas, 20, 30);
+                }
+
+                //canvas.restore();
+                getHolder().unlockCanvasAndPost(canvas);
+            }
+        }
+    }
     /**
      * This method is invoked shall perform concrete operation to initialize the camera.
      * CONTRACT: as a result of this method variables mFrameWidth and mFrameHeight MUST be

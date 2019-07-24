@@ -4,5 +4,10 @@
       android:versionCode="3440"
       android:versionName="3.4.4">
 
-    <uses-sdk android:targetSdkVersion="21" />
+    <!--<uses-sdk android:targetSdkVersion="28" />-->
+    <!--java.org.opencv.android.CameraBridgeViewBase添加几个测试的方法(deliverAndDrawFrame)-->
+    <!--java.org.opencv.android.JavaCameraView修改了initializeCamera方法,新增
+    final boolean landscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+                    setDisplayOrientation(mCamera, landscape ? 180:90);
+                    mCamera.setPreviewDisplay(getHolder());-->
 </manifest>

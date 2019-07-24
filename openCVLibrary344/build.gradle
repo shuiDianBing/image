@@ -39,5 +39,5 @@ android {
     }
 }
 
-dependencies {
+dependencies {//使用本库时注意引用其他的so文件多于本库的so会出现找不到opencv相关的so(解决办法删除多余的so保留和opencv的so相同的文件)
 }
