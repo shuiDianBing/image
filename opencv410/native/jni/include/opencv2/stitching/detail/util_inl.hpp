@@ -96,7 +96,7 @@ B Graph::walkBreadthFirst(int from, B body) const
 
 
 //////////////////////////////////////////////////////////////////////////////
-// Some auxiliary math functions
+// Some com.shuidianbind.image.auxiliary math functions
 
 static inline
 float normL2(const Point3f& a)
