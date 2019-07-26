@@ -30,12 +30,19 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
+import org.opencv.core.DMatch;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.opencv.objdetect.CascadeClassifier;
@@ -127,6 +134,7 @@ public class OpencvActivity extends AppCompatActivity implements View.OnTouchLis
 //                    // 每隔0.5秒对比一次
 //                    handler.sendEmptyMessageDelayed(-1, 500);
 //                }
+
                 // 将每一帧的图像展示在界面上,
                 return rgba;
                 /*Mat mRgba = cvCameraViewFrame.rgba();
