@@ -595,7 +595,7 @@ public class ActivityCaptureVideo extends AppCompatActivity {
                 double similarity = /*comPareHist(origin,contrast);*/SimilarPicture.similarity(origin,contrast,8,8);
                 Log.e(ActivityCaptureVideo.class.getName(), "相似度 ：   ==" + similarity);
                 synchronized (LOCK) {
-                    handler.obtainMessage(0.64 < similarity && similarity <1 ? 0 : -1, similarity).sendToTarget();
+                    handler.obtainMessage(0.64 < similarity && similarity <1 ? 0 : -1, similarity).sendToTarget();//(200 < similarity && Double.NaN != similarity? 0 : -1, similarity).sendToTarget();
                 }
 //                Mat mat1 = new Mat();
 //                Mat mat2 = new Mat();
