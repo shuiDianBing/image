@@ -27,6 +27,8 @@
         <activity android:name=".OpenCvSimilarityActivity" android:screenOrientation="portrait"/>
         <activity android:name=".OpencvActivity" android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+        <activity android:name=".ActivityCaptureVideo" android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
     </application>
 
 </manifest>

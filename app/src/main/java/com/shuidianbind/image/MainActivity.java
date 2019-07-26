@@ -90,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }.execute();
 
-        startActivity(new Intent(this, OpencvActivity.class));
+        //startActivity(new Intent(this, OpencvActivity.class));
+        ActivityCaptureVideo.startActivityForResult(this,"http://pic1.win4000.com/wallpaper/8/53ba3d551dd77.jpg");
     }
 
     private void preview() {
